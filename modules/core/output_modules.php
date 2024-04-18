@@ -205,7 +205,7 @@ class Hm_Output_login_start extends Hm_Output_Module {
                     '.user-icon_signin{display:block; background-color:white; border-radius:100%; padding:10px; height:40px; margin-top:-120px; box-shadow: #6eb549 .4px 2.4px 6.2px; }'.
                     '.label_signin{width:210px; margin:0px 0px -18px 0px;color:#fff;opacity:0.7;} @media (max-height : 500px){ .user-icon_signin{display:none;}}
                     </style>';
-    
+
                 return $css.'<div class="form-container"><form class="login_form" method="POST">';
             }
             else {
@@ -275,7 +275,7 @@ class Hm_Output_login extends Hm_Output_Module {
             if (!$single && count($settings) > 0) {
                 $changed = 1;
             }
-           
+
         return '<div class="modal fade" id="confirmLogoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmLogoutModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
@@ -1116,7 +1116,7 @@ class Hm_Output_all_since_setting extends Hm_Output_Module {
      * Processed by Hm_Handler_process_all_since_setting
      */
     protected function output() {
-        $since = DEFAULT_SINCE; 
+        $since = DEFAULT_SINCE;
         $settings = $this->get('user_settings', array());
         if (array_key_exists('all_since', $settings) && $settings['all_since']) {
             $since = $settings['all_since'];
@@ -1778,7 +1778,7 @@ class Hm_Output_home_password_dialogs extends Hm_Output_Module {
             $res = '<div class="home_password_dialogs">';
             $res .= '<div class="nux_title">Passwords</div>'.$this->trans('You have elected to not store passwords between logins.').
                 ' '.$this->trans('Enter your passwords below to gain access to these services during this session.').'<br /><br />';
-                
+
             foreach ($missing as $vals) {
                 $id = $this->html_safe(sprintf('%s_%s', strtolower($vals['type']), $vals['id']));
                 $res .= '<div class="div_'.$id.'" >'.$this->html_safe($vals['type']).' '.$this->html_safe($vals['name']).
@@ -2093,7 +2093,7 @@ class Hm_Output_server_config_stepper extends Hm_Output_Module {
         }
 
         if($hasJmapActivated){
-            
+
             $jmap_servers_count = count(array_filter($this->get('imap_servers', array()), function($v) { return array_key_exists('type', $v) && $v['type'] == 'jmap'; }));
             if($accordionTitle != ''){
                 $accordionTitle .= ' - ';
@@ -2138,7 +2138,7 @@ class Hm_Output_server_config_stepper extends Hm_Output_Module {
                       <a href="#" class="pe-auto">
                           <i class="bi bi-envelope-fill me-3"></i>
                           <b> '.$accordionTitle.'</b>
-                      </a> 
+                      </a>
                       <div class="server_count">'.$configuredText.'</div>
                   </div>
              <div class="server_config_section px-4 pt-3 me-0">

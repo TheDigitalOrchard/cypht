@@ -626,5 +626,3 @@ return array(
     'Are you sure you want to send this message?' => false,
     'IMAP and JMAP Servers' => false,
 );
-
-?>

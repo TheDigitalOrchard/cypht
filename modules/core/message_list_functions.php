@@ -574,7 +574,7 @@ function build_page_links($page_size, $current_page, $total, $path, $filter=fals
     $links = '';
     $first = '';
     $last = '';
-    $display_links = 10; 
+    $display_links = 10;
     if ($filter) {
         $filter_str = '&amp;filter='.$filter;
     }
@@ -633,4 +633,3 @@ function build_page_links($page_size, $current_page, $total, $path, $filter=fals
     }
     return $prev.' '.$first.$links.$last.' '.$next;
 }}
-
