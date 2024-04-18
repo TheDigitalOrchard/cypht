@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
    language       ：Chinese_simplified
    languageNative ：简体中文（中国）
    translators    ：PJ568
@@ -648,4 +648,4 @@ return array(
     'IMAP and JMAP Servers' => 'IMAP 服务器及 JMAP 服务器',
     'Junk' => '垃圾',
     'Trash' => '已删除',
-); 
+);
