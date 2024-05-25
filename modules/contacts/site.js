@@ -31,7 +31,6 @@ var add_contact_from_message_view = function() {
         function (res) {
           $('.add_contact_controls').toggle();
           window.location.reload();
-          remove_message_content();
         }
       );
     }
@@ -251,7 +250,7 @@ if (hm_page_name() == 'contacts') {
         return false;
     });
     $('.reset_contact').on("click", function() {
-        window.location.href = '?page=contacts';
+        Hm_Utils.redirect('?page=contacts');
     });
     $('.server_title').on("click", function() {
         $(this).next().toggle();
@@ -268,9 +267,9 @@ if (hm_page_name() == 'contacts') {
         }
 
     });
-    $('.source_link').on("click", function () { 
+    $('.source_link').on("click", function () {
         $('.list_actions').toggle(); $('#list_controls_menu').hide();
-        return false; 
+        return false;
     });
     contact_import_pagination();
 }

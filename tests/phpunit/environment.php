@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 class Hm_Test_Environment_Variable extends TestCase {
 
     public function setUp(): void {
-        require 'bootstrap.php'; 
-        
+        require 'bootstrap.php';
+
     }
     /**
      * @preserveGlobalState disabled
@@ -18,8 +18,8 @@ class Hm_Test_Environment_Variable extends TestCase {
     public function test_get() {
         $environment = Hm_Environment::getInstance();
         $environment->load();
-        $tm_dotenv = $environment->get('TM_DOTENV');
-        $this->assertStringEndsWith(".env", $tm_dotenv);
+        $cypht_dotenv = $environment->get('CYPHT_DOTENV');
+        $this->assertStringEndsWith(".env", $cypht_dotenv);
     }
 
     /**
@@ -47,4 +47,3 @@ class Hm_Test_Environment_Variable extends TestCase {
         $this->assertEquals($expected, $env_vars);
     }
 }
-?>

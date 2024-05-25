@@ -237,8 +237,8 @@ function format_imap_message_list($msg_list, $output_module, $parent_list=false,
             }
             $date = translate_time_str(human_readable_interval($msg[$date_field]), $output_module);
             $timestamp = strtotime($msg[$date_field]);
-        }    
-        
+        }
+
         $flags = array();
         if (!stristr($msg['flags'], 'seen')) {
             $flags[] = 'unseen';
@@ -1470,6 +1470,14 @@ if (!hm_exists('connect_to_imap_server')) {
             }
         }
 
-        return Hm_IMAP_List::service_connect($imap_server_id, $server, $user, $pass, false);
+        $imap = Hm_IMAP_List::connect($imap_server_id, false);
+
+        if (imap_authed($imap)) {
+            return $imap_server_id;
+        }else {
+            Hm_IMAP_List::del($imap_server_id);
+            Hm_Msgs::add('ERRAuthentication failed');
+            return null;
+        }
     }
 }

@@ -170,14 +170,14 @@ var imap_delete_message = function(state, supplied_uid, supplied_detail) {
                     remove_from_cached_imap_pages(msg_cache_key);
                     var nlink = $('.nlink');
                     if (nlink.length && Hm_Utils.get_from_global('auto_advance_email_enabled')) {
-                        window.location.href = nlink.attr('href');
+                        Hm_Utils.redirect(nlink.attr('href'));
                     }
                     else {
                         if (!hm_list_parent()) {
-                            window.location.href = "?page=message_list&list_path="+hm_list_path();
+                            Hm_Utils.redirect("?page=message_list&list_path="+hm_list_path());
                         }
                         else {
-                            window.location.href = "?page=message_list&list_path="+hm_list_parent();
+                            Hm_Utils.redirect("?page=message_list&list_path="+hm_list_parent());
                         }
                     }
                 }
@@ -208,14 +208,14 @@ var imap_unread_message = function(supplied_uid, supplied_detail) {
                     }
                     var nlink = $('.nlink');
                     if (nlink.length && Hm_Utils.get_from_global('auto_advance_email_enabled')) {
-                        window.location.href = nlink.attr('href');
+                        Hm_Utils.redirect(nlink.attr('href'));
                     }
                     else {
                         if (!hm_list_parent()) {
-                            window.location.href = "?page=message_list&list_path="+hm_list_path();
+                            Hm_Utils.redirect("?page=message_list&list_path="+hm_list_path());
                         }
                         else {
-                            window.location.href = "?page=message_list&list_path="+hm_list_parent();
+                            Hm_Utils.redirect("?page=message_list&list_path="+hm_list_parent());
                         }
                     }
             },
@@ -976,16 +976,16 @@ var imap_perform_move_copy = function(dest_id, context) {
                     if (action == 'move') {
                         var nlink = $('.nlink');
                         if (nlink.length && Hm_Utils.get_from_global('auto_advance_email_enabled')) {
-                            window.location.href = nlink.attr('href');
+                            Hm_Utils.redirect(nlink.attr('href'));
                         }
                         else {
-                            if(hm_page_name() == 'search'){
+                            if (hm_page_name() == 'search') {
                                 window.location.reload();
                             }
-                            else if(hm_page_name() == 'advanced_search'){
+                            else if (hm_page_name() == 'advanced_search'){
                                 process_advanced_search();
-                            }else{
-                                window.location.href = "?page=message_list&list_path="+hm_list_parent();
+                            } else {
+                                Hm_Utils.redirect("?page=message_list&list_path="+hm_list_parent());
                             }
                         }
                     }
@@ -1194,7 +1194,7 @@ $(function() {
 
     if ($('.imap_move').length > 0) {
         check_select_for_imap();
-        $('.toggle_link').on("click", function() { setTimeout(search_selected_for_imap, 100); });
+        $('.toggle_link').on("click", function() {  $('.mailbox_list_title').toggleClass('hide'); setTimeout(search_selected_for_imap, 100); });
         Hm_Ajax.add_callback_hook('ajax_imap_folder_display', check_select_for_imap);
         Hm_Message_List.callbacks.push(check_select_for_imap);
         $('.imap_move').on("click", function() { return false; });
@@ -1237,14 +1237,14 @@ var imap_archive_message = function(state, supplied_uid, supplied_detail) {
                     }
                     var nlink = $('.nlink');
                     if (nlink.length && Hm_Utils.get_from_global('auto_advance_email_enabled')) {
-                        window.location.href = nlink.attr('href');
+                        Hm_Utils.redirect(nlink.attr('href'));
                     }
                     else {
                         if (!hm_list_parent()) {
-                            window.location.href = "?page=message_list&list_path="+hm_list_path();
+                            Hm_Utils.redirect("?page=message_list&list_path="+hm_list_path());
                         }
                         else {
-                            window.location.href = "?page=message_list&list_path="+hm_list_parent();
+                            Hm_Utils.redirect("?page=message_list&list_path="+hm_list_parent());
                         }
                     }
                 }
@@ -1284,7 +1284,7 @@ function handleAllowResource(element, messagePart) {
 
 /**
  * Create and insert in the DOM an element containing a message and a button to allow the resource.
- * 
+ *
  * @param {HTMLElement} element - The element having the blocked resource.
  * @returns {void}
  */
@@ -1296,7 +1296,7 @@ function handleInvisibleResource(element) {
     allowResource.classList.add('alert', 'alert-warning', 'p-1');
 
     const source = dataSrc.substring(0, 40) + (dataSrc.length > 40 ? '...' : '');
-    allowResource.innerHTML = `Source blocked: ${element.alt ? element.alt : source} 
+    allowResource.innerHTML = `Source blocked: ${element.alt ? element.alt : source}
     <a href="#" data-src="${dataSrc}" class="btn btn-light btn-sm">
     Allow</a></div>
     `;
@@ -1310,7 +1310,7 @@ const mutation = new MutationObserver(function (mutations) {
         if (mutation.addedNodes.length > 0) {
             mutation.addedNodes.forEach(function (node) {
                 if (node.classList.contains('msg_text_inner')) {
-                    
+
                     //  Extarnal resources notice boxes container
                     document.querySelector('.msg_text_inner').insertAdjacentHTML('afterbegin', '<div class="external_notices"></div>');
 

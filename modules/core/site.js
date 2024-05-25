@@ -164,7 +164,7 @@ var Hm_Ajax = {
 };
 
 /* ajax request wrapper */
-var Hm_Ajax_Request = function() { return { 
+var Hm_Ajax_Request = function() { return {
     callback: false,
     name: false,
     batch_callback: false,
@@ -327,7 +327,7 @@ function Hm_Modal(options) {
         btnSize: '',
         modalId: 'myModal',
     };
-  
+
     this.opts = { ...defaults, ...options };
 
     this.init = function () {
@@ -641,7 +641,7 @@ function Message_List() {
                 continue;
             }
             id = id.replace(/ /, '-');
-            if (!$('.'+Hm_Utils.clean_selector(id), msg_rows).length) { 
+            if (!$('.'+Hm_Utils.clean_selector(id), msg_rows).length) {
                 this.insert_into_message_list(row, msg_rows);
                 $('.'+Hm_Utils.clean_selector(id), msg_rows).show();
             }
@@ -827,7 +827,9 @@ function Message_List() {
             this.sort_fld = sort_type;
             $('.combined_sort').val(sort_type);
         }
-        $('.core_msg_control').on("click", function() { return self.message_action($(this).data('action')); });
+        $('.core_msg_control').on("click", function(e) {
+            e.preventDefault();
+            return self.message_action($(this).data('action')); });
         $('.toggle_link').on("click", function() { return self.toggle_rows(); });
         $('.refresh_link').on("click", function() { return self.load_sources(); });
     };
@@ -936,7 +938,6 @@ function Message_List() {
         if (!updated) {
             self.update_after_action(action_type, selected);
         }
-        return false;
     };
 
     this.prev_next_links = function(cache, class_name) {
@@ -1312,7 +1313,7 @@ var Hm_Folders = {
             Hm_Folders.update_folder_list();
             Hm_Ajax.add_callback_hook('hm_reload_folders', function() {
                 e.target.innerHTML = text;
-            }); 
+            });
             return false;
         });
         $('.hide_folders').on("click", function() { return Hm_Folders.hide_folder_list(); });
@@ -1681,6 +1682,17 @@ var Hm_Utils = {
         var style = window.getComputedStyle(elem);
         return style.display !== 'none' && style.visibility !== 'hidden' && elem.offsetWidth > 0 && elem.offsetHeight > 0;
     },
+
+    redirect: function (path) {
+        if (! path) {
+            path = window.location.href;
+        }
+        window.location.href = path;
+    },
+
+    is_valid_email: function (val) {
+        return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(val)
+    },
 };
 
 var Hm_Crypt = {
@@ -1794,7 +1806,7 @@ var reset_default_value_select = function() {
     "timezone" : 0, "list_style" : 0, "idle_time" : 4, "start_page" : 0, "default_sort_order" : 0,
     "unread_since" : 1, "flagged_since" : 1, "all_since" : 1, "all_email_since" : 1, "feed_since" : 0,
     "sent_since" : 1};
-    
+
     if (this.style.transform == "scaleX(1)") {
         this.style.transform = "scaleX(-1)";
         this.parentElement.setAttribute("restore_aria_label",hm_trans("Restore default value"))
@@ -1941,7 +1953,7 @@ $(function() {
 });
 
 /*
-   check if language is rtl, it checks some elements based on the page and 
+   check if language is rtl, it checks some elements based on the page and
    if those contain non-Arabic letters, the ltr class will be added and it
    will fix the direction and font.
 */
@@ -1975,7 +1987,7 @@ function fixLtrInRtl() {
     }
 
     setTimeout(function(){
-        var elements = getElements() 
+        var elements = getElements()
         for (var index = 0; index < elements.length; index++) {
             if (isTextEnglish(elements[index].textContent)) {
                 if ((elements[index].className).indexOf("ltr") > -1) {
@@ -2040,9 +2052,9 @@ if(tableBody && !hm_mobile()) {
                 checkbox.checked = false;
             });
         }
-        
+
         movingNumber = movingElements.length || 1;
-        
+
         const element = document.createElement('div');
         element.textContent = `Move ${movingNumber} conversation${movingNumber > 1 ? 's' : ''}`;
         element.style.position = 'absolute';
@@ -2052,11 +2064,11 @@ if(tableBody && !hm_mobile()) {
         function moveElement() {
             element.style.display = 'none';
         }
-        
+
         function removeElement() {
             element.remove();
         }
-        
+
         document.addEventListener('drag', moveElement);
         document.addEventListener('mouseover', removeElement);
 
@@ -2079,7 +2091,7 @@ if(tableBody && !hm_mobile()) {
                 }
             });
         }
-        
+
         if (selectedRows.length == 0) {
             selectedRows.push(movingElement);
         }
@@ -2099,7 +2111,7 @@ if(tableBody && !hm_mobile()) {
                 }
             }
         );
-        
+
         // Reset the target folder
         targetFolder = null;
     });
@@ -2121,7 +2133,7 @@ if(tableBody && !hm_mobile()) {
                 }
             });
         });
-        
+
         emailFoldersElements.forEach((emailFolder) => {
             emailFolder.addEventListener('dragenter', () => {
                 emailFolder.classList.add('drop_target');
@@ -2282,8 +2294,14 @@ function handleProviderChange(select) {
         $("#srv_setup_stepper_imap_port").val(993);
     }
 }
+
+function setDefaultReplyTo(val) {
+    if (Hm_Utils.is_valid_email(val)) {
+        $("#srv_setup_stepper_profile_reply_to").val(val);
+    }
+}
 function display_config_step(stepNumber) {
-    if(stepNumber == 2) {
+    if(stepNumber === 2) {
 
         var isValid = true;
 
@@ -2303,9 +2321,10 @@ function display_config_step(stepNumber) {
 
         let providerKey = getEmailProviderKey($('#srv_setup_stepper_email').val());
         getServiceDetails(providerKey);
+        setDefaultReplyTo($('#srv_setup_stepper_email').val());
     }
 
-    if(stepNumber == 3) {
+    if(stepNumber === 3) {
         var requiredFields = [];
         var isValid = true;
 
@@ -2394,6 +2413,18 @@ function getServiceDetails(providerKey){
 
                     if(serverConfig.tls)$("input[name='srv_setup_stepper_imap_tls'][value='true']").prop("checked", true);
                     else $("input[name='srv_setup_stepper_imap_tls'][value='false']").prop("checked", true);
+
+                    if (serverConfig.hasOwnProperty('sieve')) {
+                        $('#srv_setup_stepper_enable_sieve')
+                            .prop('checked', true)
+                            .trigger('change');
+                        $('#srv_setup_stepper_imap_sieve_host').val(serverConfig.sieve.host + ':' + serverConfig.sieve.port);
+                    } else {
+                        $('#srv_setup_stepper_enable_sieve')
+                            .prop('checked', false)
+                            .trigger('change');;
+                        $('#srv_setup_stepper_imap_sieve_host').val('');
+                    }
                 }
             },
             [],
@@ -2438,5 +2469,3 @@ function getEmailProviderKey(email) {
 
     return "";
 }
-
-
