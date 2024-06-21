@@ -29,7 +29,7 @@ function imap_sources($callback, $mod, $folder = 'sent') {
         }
         $folders = get_special_folders($mod, $index);
         if (array_key_exists($folder, $folders) && $folders[$folder]) {
-            $sources[] = array('callback' => $callback, 'folder' => bin2hex('Drafts'), 'type' => 'imap', 'name' => $vals['name'], 'id' => $index);
+            $sources[] = array('callback' => $callback, 'folder' => bin2hex($folders[$folder]), 'type' => 'imap', 'name' => $vals['name'], 'id' => $index);
         }
         elseif ($inbox) {
             $sources[] = array('callback' => $callback, 'folder' => bin2hex('INBOX'), 'type' => 'imap', 'name' => $vals['name'], 'id' => $index);
@@ -137,7 +137,7 @@ function format_imap_folder_section($folders, $id, $output_mod, $with_input = fa
             if (strlen($output_mod->html_safe($folder['basename']))>15) {
                 $results .= '<a ' . $attrs .
                     ' title="'.$output_mod->html_safe($folder['basename']).
-                    '">'.substr($output_mod->html_safe($folder['basename']),0,15).'...</a>';
+                    '">'.mb_substr($output_mod->html_safe($folder['basename']),0,15).'...</a>';
             }
             else {
                 $results .= '<a ' . $attrs. '>'.$output_mod->html_safe($folder['basename']).'</a>';
@@ -1217,7 +1217,7 @@ function prep_folder_name($imap, $folder, $decode_folder=false, $parent=false) {
     if ($parent) {
         $folder = sprintf('%s%s%s', $parent, $ns['delim'], $folder);
     }
-    if ($folder && $ns['prefix'] && substr($folder, 0, strlen($ns['prefix'])) !== $ns['prefix']) {
+    if ($folder && $ns['prefix'] && mb_substr($folder, 0, strlen($ns['prefix'])) !== $ns['prefix']) {
         $folder = sprintf('%s%s', $ns['prefix'], $folder);
     }
     return $folder;
@@ -1427,15 +1427,18 @@ function parse_sieve_config_host($host) {
 }}
 
 if (!hm_exists('connect_to_imap_server')) {
-    function connect_to_imap_server($address, $name, $port, $user, $pass, $tls, $imap_sieve_host, $enableSieve, $type, $context, $hidden = false) {
+    function connect_to_imap_server($address, $name, $port, $user, $pass, $tls, $imap_sieve_host, $enableSieve, $type, $context, $hidden = false, $server_id = false) {
         $imap_list = array(
             'name' => $name,
             'server' => $address,
-            'hide' => false,
+            'hide' => $hidden,
             'port' => $port,
             'user' => $user,
-            'pass' => $pass,
             'tls' => $tls);
+
+        if (!$server_id || ($server_id && $pass)) {
+            $imap_list['pass'] = $pass;
+        }
 
         if ($type === 'jmap') {
             $imap_list['type'] = 'jmap';
@@ -1444,22 +1447,34 @@ if (!hm_exists('connect_to_imap_server')) {
             $imap_list['tls'] = false;
         }
 
-        if (isset($imap_sieve_host) && $imap_sieve_host) {
+        if ($enableSieve && $imap_sieve_host) {
             $imap_list['sieve_config_host'] = $imap_sieve_host;
         }
 
-        $imap_server_id = Hm_IMAP_List::add($imap_list);
+        if ($server_id) {
+            if (Hm_IMAP_List::edit($server_id, $imap_list)) {
+                $imap_server_id = $server_id;
+            } else {
+                return;
+            }
+        } else {
+            $imap_server_id = Hm_IMAP_List::add($imap_list);
+            if (! can_save_last_added_server('Hm_IMAP_List', $user)) {
+                return;
+            }
+        }
+
         $server = Hm_IMAP_List::get($imap_server_id, false);
 
         if ($enableSieve &&
-            isset($imap_sieve_host) &&
+            $imap_sieve_host &&
             $context->module_is_supported('sievefilters') &&
             $context->user_config->get('enable_sieve_filter_setting', true)) {
             try {
 
                 include APP_PATH.'modules/sievefilters/hm-sieve.php';
                 $sieveClientFactory = new Hm_Sieve_Client_Factory();
-                $client = $sieveClientFactory::init(null, $server);
+                $client = $sieveClientFactory->init(null, $server);
 
                 if (!$client) {
                     Hm_Msgs::add("ERRFailed to authenticate to the Sieve host");

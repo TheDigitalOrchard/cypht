@@ -360,16 +360,14 @@ class Hm_Output_msgs extends Hm_Output_Module {
         if (!$this->get('router_login_state') && !empty($msgs)) {
             $logged_out_class = ' logged_out';
         }
-        $res .= '<div class="d-none z-3 position-fixed top-0 end-0 mt-3 me-3 sys_messages'.$logged_out_class.'">';
-        if (!empty($msgs)) {
-            $res .= implode(',', array_map(function($v) {
-                if (preg_match("/ERR/", $v)) {
-                    return sprintf('<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-triangle me-2"></i><span class="danger">%s</span>', $this->trans(substr((string) $v, 3)));
-                }
-                else {
-                    return sprintf('<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i><span class="info">%s</span>', $this->trans($v));
-                }
-            }, $msgs));
+        $res .= '<div class="d-none position-fixed top-0 end-0 mt-3 me-3 sys_messages'.$logged_out_class.'">';
+        foreach ($msgs as $msg) {
+            if (preg_match("/ERR/", $msg)) {
+                $res .= sprintf('<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-triangle me-2"></i><span class="danger">%s</span>', $this->trans(substr((string) $msg, 3)));
+            }
+            else {
+                $res .= sprintf('<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i><span class="info">%s</span>', $this->trans($msg));
+            }
             $res .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
         }
         $res .= '</div>';
@@ -1775,18 +1773,19 @@ class Hm_Output_home_password_dialogs extends Hm_Output_Module {
     protected function output() {
         $missing = $this->get('missing_pw_servers', array());
         if (count($missing) > 0) {
-            $res = '<div class="home_password_dialogs">';
-            $res .= '<div class="nux_title">Passwords</div>'.$this->trans('You have elected to not store passwords between logins.').
-                ' '.$this->trans('Enter your passwords below to gain access to these services during this session.').'<br /><br />';
+            $res = '<div class="home_password_dialogs mt-3 col-lg-6 col-md-5 col-sm-12">';
+            $res .= '<div class="card"><div class="card-body">';
+            $res .= '<div class="card_title"><h4>Passwords</h4></div><p>'.$this->trans('You have elected to not store passwords between logins.').
+                ' '.$this->trans('Enter your passwords below to gain access to these services during this session.').'</p>';
 
             foreach ($missing as $vals) {
                 $id = $this->html_safe(sprintf('%s_%s', strtolower($vals['type']), $vals['id']));
-                $res .= '<div class="div_'.$id.'" >'.$this->html_safe($vals['type']).' '.$this->html_safe($vals['name']).
-                    ' '.$this->html_safe($vals['user']).' '.$this->html_safe($vals['server']).' <input placeholder="'.$this->trans('Password').
-                    '" type="password" class="pw_input" id="update_pw_'.$id.'" /> <input type="button" class="pw_update" data-id="'.$id.
-                    '" value="'.$this->trans('Update').'" /></div>';
+                $res .= '<div class="div_'.$id.' mt-3">'.$this->html_safe($vals['type']).' '.$this->html_safe($vals['name']).
+                    ' '.$this->html_safe($vals['user']).' '.$this->html_safe($vals['server']).' <div class="input-group mt-2"><input placeholder="'.$this->trans('Password').
+                    '" type="password" class="form-control pw_input" id="update_pw_'.$id.'" /> <input type="button" class="pw_update btn btn-primary" data-id="'.$id.
+                    '" value="'.$this->trans('Update').'" /></div></div>';
             }
-            $res .= '</div>';
+            $res .= '</div></div></div>';
             return $res;
         }
     }
@@ -2152,6 +2151,8 @@ class Hm_Output_server_config_stepper extends Hm_Output_Module {
                             <div>
                                 <form class=" me-0" method="POST">
                                         <input type="hidden" name="hm_page_key" value="'.$this->html_safe(Hm_Request_Key::generate()).'" />
+                                        <input type="hidden" name="srv_setup_stepper_imap_server_id" id="srv_setup_stepper_imap_server_id" />
+                                        <input type="hidden" name="srv_setup_stepper_smtp_server_id" id="srv_setup_stepper_smtp_server_id" />
                                         <div class="form-floating mb-3">
                                             <input required type="text" id="srv_setup_stepper_profile_name" name="srv_setup_stepper_profile_name" class="txt_fld form-control" value="" placeholder="'.$this->trans('Name').'">
                                             <label class="" for="srv_setup_stepper_profile_name">'.$this->trans('Name').'</label>
@@ -2170,7 +2171,7 @@ class Hm_Output_server_config_stepper extends Hm_Output_Module {
                                 </form>
                             </div>
                             <div class="step_config-actions mt-4 d-flex justify-content-between">
-                                <button class="btn btn-primary px-5" onclick="display_config_step(0)">'.$this->trans('Cancel').'</button>
+                                <button class="btn btn-primary px-5" onclick="display_config_step(0);resetQuickSetupForm();">'.$this->trans('Cancel').'</button>
                                 <button class="btn btn-primary px-5" onclick="display_config_step(2)">'.$this->trans('Next').'</button>
                             </div>
                         </div>
@@ -2237,19 +2238,14 @@ class Hm_Output_server_config_stepper_end_part extends Hm_Output_Module {
 
         $res .= '</form>
             </div>
-            <div class="srv_setup_stepper_form_loader hide" id="srv_setup_stepper_form_loader">
-                <div class="spinner-border text-dark" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
             <div class="step_config-actions mt-4 d-flex justify-content-between">
-                <button class="btn btn-danger px-3" onclick="display_config_step(0)">'.$this->trans('Cancel').'</button>
+                <button class="btn btn-danger px-3" onclick="display_config_step(0);resetQuickSetupForm();">'.$this->trans('Cancel').'</button>
                 <button class="btn btn-primary px-4" onclick="display_config_step(1)">'.$this->trans('Previous').'</button>
-                <button class="btn btn-primary px-3" onclick="display_config_step(3)">'.$this->trans('Finish').'</button>
+                <button class="btn btn-primary px-3" onclick="display_config_step(3)" id="stepper-action-finish">'.$this->trans('Finish').'</button>
             </div>
         </div>
         <div id="step_config_0" class="step_config current_config_step">
-            <button class="btn btn-primary px-4" onclick="display_config_step(1)"><i class="bi bi-plus-square-fill me-2"></i> '.$this->trans('Add a new server').'</button>
+            <button class="imap-jmap-smtp-btn btn btn-primary px-4" onclick="display_config_step(1)"><i class="bi bi-plus-square-fill me-2"></i> '.$this->trans('Add a new server').'</button>
         </div>
     </div>
 </div>

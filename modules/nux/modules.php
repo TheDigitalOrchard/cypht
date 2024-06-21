@@ -172,13 +172,8 @@ class Hm_Handler_process_nux_add_service extends Hm_Handler_Module {
                 if ($details['sieve'] && $this->module_is_supported('sievefilters') && $this->user_config->get('enable_sieve_filter_setting', true)) {
                     $imap_list['sieve_config_host'] = $details['sieve']['host'].':'.$details['sieve']['port'];
                 }
-                Hm_IMAP_List::add($imap_list);
-                $servers = Hm_IMAP_List::dump(false, true);
-                $ids = array_keys($servers);
-                $new_id = array_pop($ids);
-                if (in_server_list('Hm_IMAP_List', $new_id, $form['nux_email'])) {
-                    Hm_IMAP_List::del($new_id);
-                    Hm_Msgs::add('ERRThis IMAP server and username are already configured');
+                $new_id = Hm_IMAP_List::add($imap_list);
+                if (! can_save_last_added_server('Hm_IMAP_List', $form['nux_email'])) {
                     return;
                 }
                 $imap = Hm_IMAP_List::connect($new_id, false);
@@ -192,13 +187,8 @@ class Hm_Handler_process_nux_add_service extends Hm_Handler_Module {
                             'user' => $form['nux_email'],
                             'pass' => $form['nux_pass']
                         ));
-                        $this->session->record_unsaved('SMTP server added');
-                        $smtp_servers = Hm_SMTP_List::dump(false, true);
-                        $ids = array_keys($servers);
-                        $new_smtp_id = array_pop($ids);
-                        if (in_server_list('Hm_SMTP_List', $new_smtp_id, $form['nux_email'])) {
-                            Hm_SMTP_List::del($new_smtp_id);
-                            Hm_Msgs::add('ERRThis SMTP server and username are already configured');
+                        if (can_save_last_added_server('Hm_SMTP_List', $form['nux_email'])) {
+                            $this->session->record_unsaved('SMTP server added');
                         }
                     }
                     Hm_IMAP_List::clean_up();
@@ -209,8 +199,10 @@ class Hm_Handler_process_nux_add_service extends Hm_Handler_Module {
                     $this->save_hm_msgs();
                     $this->session->close_early();
                     $this->out('nux_account_added', true);
-                    $this->out('nux_server_id', $new_id);
-                    $this->out('nux_service_name', $form['nux_service']);
+                    if ($this->module_is_supported('imap_folders')) {
+                        $this->out('nux_server_id', $new_id);
+                        $this->out('nux_service_name', $form['nux_service']);
+                    }
                 }
                 else {
                     Hm_IMAP_List::del($new_id);
@@ -330,7 +322,7 @@ class Hm_Output_service_details extends Hm_Output_Module {
  */
 class Hm_Output_nux_dev_news extends Hm_Output_Module {
     protected function output() {
-        $res = '<div class="nux_dev_news mt-3 col-12"><div class="card"><div class="card-body"><div class="nux_title">'.$this->trans('Development Updates').'</div><table>';
+        $res = '<div class="nux_dev_news mt-3 col-12"><div class="card"><div class="card-body"><div class="card_title"><h4>'.$this->trans('Development Updates').'</h4></div><table>';
         foreach ($this->get('nux_dev_news', array()) as $vals) {
             $res .= sprintf('<tr><td><a href="https://github.com/cypht-org/cypht/commit/%s" target="_blank" rel="noopener">%s</a>'.
                 '</td><td class="msg_date">%s</td><td>%s</td><td>%s</td></tr>',
@@ -351,7 +343,7 @@ class Hm_Output_nux_dev_news extends Hm_Output_Module {
  */
 class Hm_Output_nux_help extends Hm_Output_Module {
     protected function output() {
-        return '<div class="nux_help mt-3 col-lg-6 col-md-12 col-sm-12"><div class="card"><div class="card-body"><div class="nux_title">'.$this->trans('Help').'</div>'.
+        return '<div class="nux_help mt-3 col-lg-6 col-md-12 col-sm-12"><div class="card"><div class="card-body"><div class="card_title"><h4>'.$this->trans('Help').'</h4></div>'.
             $this->trans('Cypht is a webmail program. You can use it to access your E-mail accounts from any service that offers IMAP, or SMTP access - which most do.').' '.
         '</div></div></div>';
     }

@@ -29,11 +29,14 @@ require APP_PATH.'lib/output.php';
 require APP_PATH.'lib/crypt.php';
 require APP_PATH.'lib/crypt_sodium.php';
 require APP_PATH.'lib/sodium_compat.php';
+require APP_PATH.'lib/scram.php';
 require APP_PATH.'lib/environment.php';
 require APP_PATH.'lib/db.php';
 require APP_PATH.'lib/servers.php';
 require APP_PATH.'lib/api.php';
 require APP_PATH.'lib/webdav_formats.php';
+
+require_once APP_PATH.'modules/core/functions.php';
 
 /* load random bytes polyfill if needed */
 if (!function_exists('random_bytes')) {
@@ -66,7 +69,7 @@ if (!class_exists('Hm_Functions')) {
          * @param string $value
          * @return boolean
          */
-        public static function setcookie($name, $value, $lifetime = 0, $path = '', $domain = '', $secure = false, $html_only = false) {
+        public static function setcookie($name, $value, $lifetime = 0, $path = '', $domain = '', $secure = false, $html_only = false, $same_site = 'Strict') {
             $prefix = ($lifetime != 0 && $lifetime < time()) ? 'Deleting' : 'Setting';
             Hm_Debug::add(sprintf('%s cookie: name: %s, lifetime: %s, path: %s, domain: %s, secure: %s, html_only %s',$prefix, $name, $lifetime, $path, $domain, $secure, $html_only));
             if (version_compare(PHP_VERSION, '7.3', '>=')) {
@@ -76,7 +79,7 @@ if (!class_exists('Hm_Functions')) {
                         'domain' => $domain,
                         'secure' => $secure,
                         'httponly' => $html_only,
-                        'samesite' => 'Strict'
+                        'samesite' => $same_site
                     ]
                 );
             } else {
@@ -201,6 +204,17 @@ if (!class_exists('Hm_Functions')) {
          * @return array filtered list
          */
         public static function filter_input_array($type, $filters) {
+            /*
+            In FastCGI, filter_input_array does not work as intended with INPUT_SERVER because its stored copy of data doesn't get modified during the request.
+            So we need to explicitly access the $_SERVER.
+            */
+            if ($type === INPUT_SERVER) {
+                $value = array();
+                foreach ($filters as $var => $flag) {
+                    $value[$var] = filter_var($_SERVER[$var], $flag);
+                }
+                return $value;
+            }
             return filter_input_array($type, $filters, false);
         }
 

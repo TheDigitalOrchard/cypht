@@ -37,7 +37,7 @@ build_config();
  * @return void
  * */
 function check_php() {
-    $minVersion = 7.4;
+    $minVersion = 8.1;
     $version = phpversion();
     if (substr($version, 0, 3) < $minVersion) {
         die("Cypht requires PHP version $minVersion or greater");
@@ -323,18 +323,19 @@ function process_bootswatch_files() {
     $dir = opendir($src);
     while(false !== ($folder = readdir($dir))) {
         if (($folder != '.' ) && ($folder != '..' )) {
-            if (is_dir($src . '/' . $folder)) {
+            if (is_dir($src . '/' . $folder) && $folder != 'fonts') {
                 $target = $src . '/' . $folder . '/css/' . $folder . '.css';
                 if ($folder == 'default') {
                     $content = file_get_contents('vendor/twbs/bootstrap/dist/css/bootstrap.min.css');
-                    // Append customization done to the default theme
-                    $custom = file_get_contents($target);
-                    $custom = preg_replace('/^@import.+/m', '', $custom);
-                    $custom = preg_replace('/^@charset.+/m', '', $custom);
-                    $content .= "\n" . $custom;
                 } else {
                     $content = file_get_contents('vendor/thomaspark/bootswatch/dist/' . $folder . '/bootstrap.min.css');
                 }
+                // Append customization done to the default theme
+                $custom = file_get_contents($target);
+                $custom = preg_replace('/^@import.+/m', '', $custom);
+                $custom = preg_replace('/^@charset.+/m', '', $custom);
+                $content .= "\n" . $custom;
+
                 file_put_contents($target, $content);
             }
         }
