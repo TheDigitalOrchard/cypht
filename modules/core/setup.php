@@ -217,6 +217,8 @@ return array(
         'msg_parts' => array(FILTER_UNSAFE_RAW, false),
         'page_links' => array(FILTER_UNSAFE_RAW, false),
         'folder_status' => array(FILTER_DEFAULT, FILTER_REQUIRE_ARRAY),
+        'imap_server_id' => array(FILTER_DEFAULT, false),
+        'imap_service_name' => array(FILTER_DEFAULT, false),
     ),
     'allowed_cookie' => array(
         'CYPHTID' => FILTER_DEFAULT,
@@ -308,6 +310,8 @@ return array(
         'drafts_per_source' => FILTER_DEFAULT,
         'drafts_since' => FILTER_DEFAULT,
         'warn_for_unsaved_changes' => FILTER_VALIDATE_BOOLEAN,
+        'srv_setup_stepper_imap_server_id'  => FILTER_DEFAULT,
+        'srv_setup_stepper_smtp_server_id' => FILTER_DEFAULT,
         'srv_setup_stepper_profile_name'  => FILTER_DEFAULT,
         'srv_setup_stepper_email' => FILTER_DEFAULT,
         'srv_setup_stepper_password' => FILTER_UNSAFE_RAW,
@@ -328,6 +332,7 @@ return array(
         'srv_setup_stepper_imap_sieve_host' => FILTER_DEFAULT,
         'srv_setup_stepper_only_jmap' => FILTER_VALIDATE_BOOLEAN,
         'srv_setup_stepper_jmap_hide_from_c_page' => FILTER_VALIDATE_BOOLEAN,
-        'srv_setup_stepper_jmap_address' => FILTER_DEFAULT
+        'srv_setup_stepper_jmap_address' => FILTER_DEFAULT,
+        'srv_setup_stepper_imap_hide_from_c_page' => FILTER_VALIDATE_BOOLEAN
     )
 );

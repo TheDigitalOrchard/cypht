@@ -5,7 +5,7 @@ This is the official docker image of [Cypht](https://cypht.org/).
 ## Features of this image
 
 * Alpine linux based image
-* Bundled nginx and PHP 7 provides everything in one image
+* Bundled nginx and PHP provides everything in one image
 * Performs same install steps as found on [Cypht install page](https://cypht.org/install.html)
 * All Cypht mods and configuration options can be set via environment variables
 * Automatic database setup (if configured to use database)
@@ -15,10 +15,11 @@ It recommended that you choose a specific version number tag instead of using 'l
 ## Example docker-compose
 
 See example file here:
-https://github.com/jonocodes/cypht/blob/docker-refresh/docker/docker-compose.yaml
+https://github.com/cypht-org/cypht/blob/master/docker/docker-compose.yaml
 
-* Starts a database container to be for user authentication
-* Starts the Cypht container available on port 80 of the host with ...
+* Copy it to where ever you want. It does not need to be in the repo.
+* Starts a database container to be for user authentication.
+* Starts the Cypht container available on port 80 of the host with:
   * A local volume declared for persisting user settings across container reboots
   * An initial user account for authentication
   * Environment variables for accessing the database container

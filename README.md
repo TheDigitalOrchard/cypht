@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/jasonmunro/cypht.svg?branch=master)](https://travis-ci.org/jasonmunro/cypht)
 [![Coverage Status](https://coveralls.io/repos/github/jasonmunro/cypht/badge.svg?branch=master)](https://coveralls.io/github/jasonmunro/cypht?branch=master)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/127/badge)](https://bestpractices.coreinfrastructure.org/projects/127)
 
@@ -25,6 +24,7 @@ customize the program without hacking the code.
 
 
 Installation instructions 
+* Cypht master: [https://cypht.org/install.html](https://cypht.org/install.html)
 * Version 1: [https://cypht.org/install-1x.html](https://cypht.org/install-1x.html)
 * Version 2: [https://cypht.org/install-2x.html](https://cypht.org/install-2x.html)
 
@@ -43,3 +43,5 @@ For developers, get via Composer: [https://packagist.org/packages/jason-munro/cy
 Docker: [https://hub.docker.com/r/cypht/cypht](https://hub.docker.com/r/cypht/cypht)
 
 LinkedIn group: [https://www.linkedin.com/groups/13804559/](https://www.linkedin.com/groups/13804559/)
+
+An interview with the project's founder: https://github.com/cypht-org/cypht/wiki/AMA-Jason-Munro
