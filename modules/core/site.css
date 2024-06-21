@@ -772,22 +772,6 @@ div.unseen,
     rgba(0, 0, 0, 0.3) 70%
   );
 }
-.home_password_dialogs {
-  min-height: 400px;
-  max-width: 480px;
-  padding: 20px;
-  margin: 20px;
-  margin-right: 0px;
-  float: left;
-  border: solid 1px #eee;
-}
-.home_password_dialogs .pw_input {
-  width: 120px;
-}
-.nux_title {
-  font-size: 120%;
-  margin-bottom: 20px;
-}
 .total_unread_count,
 .unread_count {
   background-color: #ccc;
@@ -920,6 +904,9 @@ div.unseen,
 .next th {
   white-space: normal !important;
 }
+.sys_messages {
+  z-index: 1100 !important;
+}
 
 /* mobile */
 .mobile {
@@ -1028,9 +1015,6 @@ div.unseen,
   padding-top: 5px;
   top: 1px;
   left: 70px !important;
-}
-.mobile .sys_messages {
-  z-index: 1000 !important;
 }
 @media (orientation: landscape) {
   .mobile .msg_controls {

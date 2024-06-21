@@ -885,7 +885,7 @@ class Hm_Test_Core_Output_Modules extends TestCase {
         $test = new Output_Test('msgs', 'core');
         $test->handler_response = array('router_login_state' => false);
         $res = $test->run();
-        $this->assertEquals(array('<div class="d-none z-3 position-fixed top-0 end-0 mt-3 me-3 sys_messages logged_out"><div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-triangle me-2"></i><span class="danger">foo</span>,<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i><span class="info">foo</span><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div></div>'), $res->output_response);
+        $this->assertEquals(array('<div class="d-none position-fixed top-0 end-0 mt-3 me-3 sys_messages logged_out"><div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-triangle me-2"></i><span class="danger">foo</span><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div><div class="alert alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i><span class="info">foo</span><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div></div>'), $res->output_response);
     }
     /**
      * @preserveGlobalState disabled
@@ -1578,7 +1578,7 @@ class Hm_Test_Core_Output_Modules extends TestCase {
         $this->assertEquals(array(), $res->output_response);
         $test->handler_response = array('missing_pw_servers' => array(array('server' => 'host', 'user' => 'test', 'type' => 'foo', 'id' => 1, 'name' => 'bar')));
         $res = $test->run();
-        $this->assertEquals(array('<div class="home_password_dialogs"><div class="nux_title">Passwords</div>You have elected to not store passwords between logins. Enter your passwords below to gain access to these services during this session.<br /><br /><div class="div_foo_1" >foo bar test host <input placeholder="Password" type="password" class="pw_input" id="update_pw_foo_1" /> <input type="button" class="pw_update" data-id="foo_1" value="Update" /></div></div>'), $res->output_response);
+        $this->assertEquals(array('<div class="home_password_dialogs mt-3 col-lg-6 col-md-5 col-sm-12"><div class="card"><div class="card-body"><div class="card_title"><h4>Passwords</h4></div><p>You have elected to not store passwords between logins. Enter your passwords below to gain access to these services during this session.</p><div class="div_foo_1 mt-3">foo bar test host <div class="input-group mt-2"><input placeholder="Password" type="password" class="form-control pw_input" id="update_pw_foo_1" /> <input type="button" class="pw_update btn btn-primary" data-id="foo_1" value="Update" /></div></div></div></div></div>'), $res->output_response);
     }
     /**
      * @preserveGlobalState disabled
